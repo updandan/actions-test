@@ -1,0 +1,14 @@
+name: Hello Sample
+
+on:
+  push:
+    branches:
+      - feature-kazumasaDerby
+  workflow_dispatch:
+
+jobs:
+  print-cello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: execute echo command
+        run: echo "Cello World!"
