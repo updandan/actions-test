@@ -1,14 +1,50 @@
-name: functions
+name: functions_deploy
 
+# feature-nagiDerby ブランチに何らかの commit が追加されたら走らせる
 on:
   push:
     branches:
       - feature-nagiDerby
-  workflow_dispatch:
+
+# 環境によって変更
+env:
+  AZURE_FUNCTIONAPP_NAME: HAL-TH22-IH4C-IW4C-G01-functions01-yoshida
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  NODE_VERSION: '16.x'
 
 jobs:
-  print-cello-world:
+  build-and-deploy:
+    # 仮想マシンの環境
     runs-on: ubuntu-latest
+
+    # ジョブで実行されるすべてのステップをグループ化
     steps:
-      - name: execute echo command
-        run: echo "Cello World!"
+    # リポジトリをランナーにチェックアウトするアクションであり、
+    # コードに対してスクリプトまたはその他のアクション（ビルドツールやテストツールなど）を実行できるようにします。
+    # ワークフローがリポジトリのコードに対して実行されるときはいつでも、チェックアウトアクションを使用する必要があります。
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+
+    # node環境をセットアップ
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    # npmをセットアップ
+    - name: 'Resolve Project Dependencies Using Npm'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        npm install
+        npm run build --if-present
+        popd
+
+    # functionsの設定
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.FUNCTIONS_NAGIDERBY }}
