@@ -23,7 +23,7 @@ jobs:
     # コードに対してスクリプトまたはその他のアクション（ビルドツールやテストツールなど）を実行できるようにします。
     # ワークフローがリポジトリのコードに対して実行されるときはいつでも、チェックアウトアクションを使用する必要があります。
     - name: 'Checkout GitHub Action'
-      uses: actions/checkout@master
+      uses: actions/checkout@feature-nagiDerby
 
     # node環境をセットアップ
     - name: Setup Node ${{ env.NODE_VERSION }} Environment
@@ -34,7 +34,6 @@ jobs:
     # npmをセットアップ
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash
-      working-directory: ./
       run: |
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         npm install
