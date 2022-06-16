@@ -1,0 +1,14 @@
+name: functions
+
+on:
+  push:
+    branches:
+      - feature-nagiDerby
+  workflow_dispatch:
+
+jobs:
+  print-cello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: execute echo command
+        run: echo "Cello World!"
